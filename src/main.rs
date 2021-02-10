@@ -4,8 +4,14 @@ use std::process::Command;
 
 extern crate yaml_rust;
 use yaml_rust::{YamlLoader};
-use std::fs;
+use std::{fs, thread};
 
+fn take_screenshot(name:String){
+
+    let mut screenshot_command = Command::new("screencapture");
+    screenshot_command.arg("-x").arg(name);
+    screenshot_command.output().expect("failed to execute process");
+}
 
 fn main(){
 
@@ -16,10 +22,9 @@ fn main(){
     let location = doc["directory"].as_str().unwrap();
     let num_of_screenshots = doc["num_of_screenshots"].as_i64().unwrap();
 
-    for x in 0..num_of_screenshots{
-        let mut screenshot_command = Command::new("screencapture");
-        screenshot_command.arg("-x").arg(location.clone().to_string() + "/screenshot_"+ &*x.clone().to_string() +".png");
-        screenshot_command.output().expect("failed to execute process");
+    for loop_number in 0..num_of_screenshots{
+        let name = location.clone().to_string() + "/screenshot_"+ &*loop_number.clone().to_string() +".png";
+        thread::spawn(|| {take_screenshot(name);});
         sleep(Duration::new(interval as u64, 0));
     }
 
