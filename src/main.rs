@@ -1,10 +1,7 @@
 use std::time::{Duration};
 use std::thread::sleep;
 use std::process::Command;
-
-extern crate yaml_rust;
-use yaml_rust::{YamlLoader};
-use std::{fs, thread};
+use std::{fs, thread, env};
 
 fn take_screenshot(name:String){
 
@@ -14,18 +11,19 @@ fn take_screenshot(name:String){
 }
 
 fn main(){
+    let args: Vec<String> = env::args().collect();
+    let folder_name = args[1].clone().to_string();
+    let number_of_screenshots: f64 = args[2].clone().parse().unwrap();
+    let interval: i64 = args[3].clone().parse().unwrap();
 
-    let s = fs::read_to_string("config.yaml").unwrap();
-    let docs = YamlLoader::load_from_str(&s).unwrap();
-    let doc = &docs[0];
-    let interval = doc["interval"].as_i64().unwrap();
-    let location = doc["directory"].as_str().unwrap();
-    let num_of_screenshots = doc["num_of_screenshots"].as_i64().unwrap();
-
-    for loop_number in 0..num_of_screenshots{
-        let name = location.clone().to_string() + "/screenshot_"+ &*loop_number.clone().to_string() +".png";
-        thread::spawn(|| {take_screenshot(name);});
-        sleep(Duration::new(interval as u64, 0));
+    match fs::create_dir_all(folder_name.clone()){
+        Ok(_) => {}
+        Err(_) => {panic!("An Error occurred")}
     }
 
+    for loop_number in 0..number_of_screenshots {
+        let name = folder_name.clone().to_string() + "/screenshot_" + &*loop_number.clone().to_string() + ".png";
+        thread::spawn(|| { take_screenshot(name); });
+        sleep(Duration::new(interval as u64, 0));
+    }
 }
