@@ -21,6 +21,7 @@ fn main(){
         Err(_) => {panic!("An Error occurred")}
     }
 
+    
     for loop_number in 0..number_of_screenshots {
         let name = folder_name.clone().to_string() + "/screenshot_" + &*loop_number.clone().to_string() + ".png";
         thread::spawn(|| { take_screenshot(name); });
