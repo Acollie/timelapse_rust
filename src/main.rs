@@ -13,7 +13,7 @@ fn take_screenshot(name:String){
 fn main(){
     let args: Vec<String> = env::args().collect();
     let folder_name = args[1].clone().to_string();
-    let number_of_screenshots: f64 = args[2].clone().parse().unwrap();
+    let number_of_screenshots: i64 = args[2].clone().parse().unwrap();
     let interval: i64 = args[3].clone().parse().unwrap();
 
     match fs::create_dir_all(folder_name.clone()){
